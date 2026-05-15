@@ -1,20 +1,48 @@
+/* ═══════════════════════════════════════════════════════════════
+   QuickBite — App-Level Styles & Page Enhancements
+   ═══════════════════════════════════════════════════════════════ */
+
 .App {
   text-align: center;
+  min-height: 100vh;
+  background: var(--qb-bg, #f8f9fc);
+  position: relative;
+}
+
+/* Subtle background pattern */
+.App::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(229, 57, 53, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(255, 109, 0, 0.03) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.App > * {
+  position: relative;
+  z-index: 1;
 }
 
 .App-logo {
   height: 40vmin;
   pointer-events: none;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+    animation: App-logo-float infinite 6s ease-in-out;
   }
 }
 
 .App-header {
-  background-color: #282c34;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -22,17 +50,178 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.App-header::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(229, 57, 53, 0.08) 0%, transparent 50%);
+  animation: bgFloat 15s ease-in-out infinite;
+  pointer-events: none;
 }
 
 .App-link {
-  color: #61dafb;
+  color: var(--qb-primary-light, #ff6f60);
+  text-decoration: none;
+  font-weight: 600;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.App-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--qb-gradient, linear-gradient(135deg, #e53935, #ff6d00));
+  transition: width 0.3s ease;
+  border-radius: 2px;
+}
+
+.App-link:hover {
+  color: #ff8a65;
+}
+
+.App-link:hover::after {
+  width: 100%;
+}
+
+/* ── Keyframes ── */
+@keyframes App-logo-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
 }
 
 @keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes bgFloat {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(30px, -30px); }
+  66% { transform: translate(-20px, 20px); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PAGE-SPECIFIC ENHANCEMENTS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Hero image overlay on RestaurantDetail ── */
+.MuiBox-root > .MuiBox-root[style*="backgroundImage"] {
+  position: relative;
+}
+
+.MuiBox-root > .MuiBox-root[style*="backgroundImage"]::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.5) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+/* ── Image hover effects in cards ── */
+.MuiCardMedia-img,
+.MuiBox-root > img {
+  transition: transform 0.5s var(--qb-transition, cubic-bezier(0.4, 0, 0.2, 1)) !important;
+}
+
+/* ── Switch for Veg toggle ── */
+.MuiSwitch-colorSuccess .MuiSwitch-thumb {
+  box-shadow: 0 2px 6px rgba(46, 125, 50, 0.3) !important;
+}
+
+.MuiSwitch-track {
+  border-radius: 14px !important;
+  opacity: 0.3 !important;
+}
+
+/* ── Menu item card image ── */
+img[alt][src*="placehold"],
+img[src*="placehold.co"] {
+  border-radius: 12px !important;
+  object-fit: cover;
+}
+
+/* ── Cart quantity controls ── */
+.MuiIconButton-root[style*="border: 1px solid"] {
+  transition: all 0.2s ease !important;
+}
+
+.MuiIconButton-root[style*="border: 1px solid"]:hover {
+  transform: scale(1.1);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LOADING STATES
+   ═══════════════════════════════════════════════════════════════ */
+
+.MuiCircularProgress-root {
+  filter: drop-shadow(0 2px 4px rgba(229, 57, 53, 0.2));
+}
+
+/* ── Skeleton shimmer effect for loading states ── */
+@keyframes shimmerLoading {
+  0% {
+    background-position: -468px 0;
   }
-  to {
-    transform: rotate(360deg);
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE: Mobile-specific polish
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 599.95px) {
+  .App::before {
+    opacity: 0.5;
+  }
+
+  /* Stack nav items on small mobile */
+  .MuiToolbar-root .MuiBox-root {
+    flex-wrap: wrap;
+  }
+
+  /* Full-width buttons on mobile checkout */
+  .MuiButton-sizeLarge {
+    padding: 14px 20px !important;
+    font-size: 0.95rem !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PRINT STYLES
+   ═══════════════════════════════════════════════════════════════ */
+
+@media print {
+  .MuiAppBar-root,
+  .MuiDrawer-root,
+  .MuiButton-root {
+    display: none !important;
+  }
+
+  .App::before {
+    display: none;
+  }
+
+  body {
+    background: white !important;
   }
 }
