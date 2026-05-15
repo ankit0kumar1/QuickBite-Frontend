@@ -1,5 +1,5 @@
 // src/pages/RestaurantDetail.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   Alert,
@@ -58,13 +58,7 @@ const RestaurantDetail = () => {
   const [reviewsTab, setReviewsTab] = useState(0);
   const [snack, setSnack] = useState({ open: false, message: '', severity: 'success' });
 
-  useEffect(() => {
-    fetchRestaurant();
-    fetchMenu();
-    fetchReviews();
-  }, [id]);
-
-  const fetchRestaurant = async () => {
+  const fetchRestaurant = useCallback(async () => {
     try {
       const res = await restaurantApi.getById(id);
       setRestaurant(res.data);
@@ -73,9 +67,9 @@ const RestaurantDetail = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
-  const fetchMenu = async () => {
+  const fetchMenu = useCallback(async () => {
     setMenuLoading(true);
     try {
       const [catRes, itemRes] = await Promise.all([
@@ -92,9 +86,9 @@ const RestaurantDetail = () => {
     } finally {
       setMenuLoading(false);
     }
-  };
+  }, [id]);
 
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     try {
       const [revRes, avgRes] = await Promise.all([
         reviewApi.getByRestaurant(id),
@@ -105,7 +99,13 @@ const RestaurantDetail = () => {
     } catch {
       setReviews([]);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchRestaurant();
+    fetchMenu();
+    fetchReviews();
+  }, [fetchMenu, fetchRestaurant, fetchReviews]);
 
   const applyFilters = (query, veg) => {
     let result = [...allItems];

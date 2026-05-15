@@ -19,15 +19,6 @@ export const CartProvider = ({ children }) => {
   const [pendingItem, setPendingItem] = useState(null);
   const [dialogOpen,  setDialogOpen]  = useState(false);
 
-  // Fetch cart when user logs in
-  useEffect(() => {
-    if (user) {
-      fetchCart();
-    } else {
-      setCart(null);
-    }
-  }, [user]);
-
   const fetchCart = useCallback(async () => {
     if (!user) return;
     setLoading(true);
@@ -40,6 +31,15 @@ export const CartProvider = ({ children }) => {
       setLoading(false);
     }
   }, [user]);
+
+  // Fetch cart when user logs in
+  useEffect(() => {
+    if (user) {
+      fetchCart();
+    } else {
+      setCart(null);
+    }
+  }, [user, fetchCart]);
 
   // Add item — handles different restaurant case
   const addItem = async (item, restaurantId) => {

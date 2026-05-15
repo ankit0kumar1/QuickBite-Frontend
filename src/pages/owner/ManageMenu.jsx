@@ -1,5 +1,5 @@
 // src/pages/owner/ManageMenu.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Alert,
@@ -73,11 +73,7 @@ const ManageMenu = () => {
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [snack, setSnack] = useState({ open: false, message: '', severity: 'success' });
 
-  useEffect(() => {
-    if (restaurantId) fetchMenu();
-  }, [restaurantId]);
-
-  const fetchMenu = async () => {
+  const fetchMenu = useCallback(async () => {
     setLoading(true);
     try {
       const [catRes, itemRes] = await Promise.all([
@@ -91,7 +87,11 @@ const ManageMenu = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [restaurantId]);
+
+  useEffect(() => {
+    if (restaurantId) fetchMenu();
+  }, [fetchMenu, restaurantId]);
 
   const openAddCategory = () => {
     setEditCatId(null);

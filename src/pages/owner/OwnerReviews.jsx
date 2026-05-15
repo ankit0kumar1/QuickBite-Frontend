@@ -1,5 +1,5 @@
 // src/pages/owner/OwnerReviews.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box, Container, Typography, Card, CardContent,
   CircularProgress, Alert, Grid, Rating,
@@ -17,7 +17,6 @@ const OwnerReviews = () => {
   const [error,          setError]          = useState('');
 
   useEffect(() => { fetchMyRestaurants(); }, []);
-  useEffect(() => { if (selectedRestId) fetchReviews(); }, [selectedRestId]);
 
   const fetchMyRestaurants = async () => {
     try {
@@ -29,7 +28,7 @@ const OwnerReviews = () => {
     }
   };
 
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
@@ -42,7 +41,9 @@ const OwnerReviews = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedRestId]);
+
+  useEffect(() => { if (selectedRestId) fetchReviews(); }, [fetchReviews, selectedRestId]);
 
   const formatDate = (d) =>
     new Date(d).toLocaleString('en-IN', {

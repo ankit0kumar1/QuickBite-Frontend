@@ -107,7 +107,7 @@ const LocationPicker = ({ latitude, longitude, onLocationChange, address, city, 
   };
 
   // ── 2. Geocode: Search address ──────────────────────────────────
-  const handleSearch = async (query) => {
+  const handleSearch = useCallback(async (query) => {
     const searchText = query || searchQuery || `${address || ''} ${city || ''}`.trim();
     if (!searchText) {
       setError('Enter an address or city to search');
@@ -140,7 +140,7 @@ const LocationPicker = ({ latitude, longitude, onLocationChange, address, city, 
     } finally {
       setSearching(false);
     }
-  };
+  }, [address, city, onLocationChange, searchQuery]);
 
   // ── 3. Map click: manual selection ──────────────────────────────
   const handleMapClick = (lat, lng) => {
@@ -159,7 +159,7 @@ const LocationPicker = ({ latitude, longitude, onLocationChange, address, city, 
       }, 1500); // debounce 1.5s
     }
     return () => clearTimeout(geocodeTimeoutRef.current);
-  }, [address, city]);
+  }, [address, city, handleSearch, markerPos]);
 
   return (
     <Box sx={{

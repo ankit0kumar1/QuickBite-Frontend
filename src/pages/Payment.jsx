@@ -1,5 +1,5 @@
 // src/pages/Payment.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate }   from 'react-router-dom';
 import {
   Box, Container, Typography, Paper,
@@ -20,19 +20,19 @@ const Payment = () => {
   const [error,       setError]       = useState('');
   const [walletBal,   setWalletBal]   = useState(null);
 
-  useEffect(() => {
-    if (!orderId) navigate('/home');
-    if (mode === 'WALLET') fetchWalletBalance();
-  }, []);
-
-  const fetchWalletBalance = async () => {
+  const fetchWalletBalance = useCallback(async () => {
     try {
       const res = await paymentApi.getWalletBalance();
       setWalletBal(res.data.data?.balance || 0);
     } catch {
       setWalletBal(0);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (!orderId) navigate('/home');
+    if (mode === 'WALLET') fetchWalletBalance();
+  }, [fetchWalletBalance, mode, navigate, orderId]);
 
   const handleCOD = async () => {
     setLoading(true);

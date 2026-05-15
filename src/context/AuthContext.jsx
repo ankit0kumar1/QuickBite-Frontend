@@ -11,8 +11,6 @@ import axiosInstance from '../api/axiosInstance';
 const AuthContext = createContext(null);
 
 // Only persist these known-safe fields — prevents stale/corrupt data
-const SAFE_FIELDS = ['email', 'fullName', 'role', 'userId', 'phone'];
-
 const sanitize = (raw) => {
   if (!raw) return null;
   const obj = typeof raw === 'string' ? JSON.parse(raw) : raw;

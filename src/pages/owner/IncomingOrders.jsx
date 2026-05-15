@@ -1,5 +1,5 @@
 // src/pages/owner/IncomingOrders.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box, Container, Typography, Card,
   CardContent, Chip, Button, CircularProgress,
@@ -32,10 +32,6 @@ const IncomingOrders = () => {
     fetchMyRestaurants();
   }, []);
 
-  useEffect(() => {
-    if (selectedRestId) fetchOrders();
-  }, [selectedRestId]);
-
   const fetchMyRestaurants = async () => {
     try {
       const res = await restaurantApi.getMyRestaurants();
@@ -48,7 +44,7 @@ const IncomingOrders = () => {
     }
   };
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
@@ -60,7 +56,11 @@ const IncomingOrders = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedRestId]);
+
+  useEffect(() => {
+    if (selectedRestId) fetchOrders();
+  }, [fetchOrders, selectedRestId]);
 
   const handleUpdateStatus = async (orderId, status) => {
     try {

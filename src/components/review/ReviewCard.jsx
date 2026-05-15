@@ -9,7 +9,6 @@ import { StarDisplay } from './StarRating';
 
 const ReviewCard = ({ review }) => {
   const {
-    reviewId,
     customerId,
     foodRating,
     deliveryRating,

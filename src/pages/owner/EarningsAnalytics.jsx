@@ -1,5 +1,5 @@
 // src/pages/owner/EarningsAnalytics.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box, Container, Typography, Paper, Grid,
   CircularProgress, Alert, Card, CardContent,
@@ -34,13 +34,6 @@ const EarningsAnalytics = () => {
   const [error,          setError]          = useState('');
 
   useEffect(() => { fetchMyRestaurants(); }, []);
-  useEffect(() => {
-    if (selectedRestId) {
-      fetchOrders();
-      fetchAnalytics();
-    }
-  }, [selectedRestId]);
-
   const fetchMyRestaurants = async () => {
     try {
       const res = await restaurantApi.getMyRestaurants();
@@ -51,7 +44,7 @@ const EarningsAnalytics = () => {
     }
   };
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
       const res = await orderApi.getOrdersByRestaurant(selectedRestId);
@@ -61,16 +54,23 @@ const EarningsAnalytics = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedRestId]);
 
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     try {
       const res = await restaurantApi.getAnalytics(selectedRestId);
       setAnalytics(res.data);
     } catch {
       // Analytics endpoint may not be available yet
     }
-  };
+  }, [selectedRestId]);
+
+  useEffect(() => {
+    if (selectedRestId) {
+      fetchOrders();
+      fetchAnalytics();
+    }
+  }, [fetchAnalytics, fetchOrders, selectedRestId]);
 
   // Compute from orders
   const delivered = orders.filter(o => o.orderStatus === 'DELIVERED');
